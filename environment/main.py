@@ -2,7 +2,7 @@ import pygame
 import time
 import math
 from utils import scale
-
+from car import AbstractCar
 
 
 GRASS = scale(pygame.image.load("assets\\grass.jpg"), 2.5)
@@ -20,21 +20,32 @@ pygame.display.set_caption("Racing Game")
 
 FPS = 60
 
-def draw(win, images):
+
+class PlayerCar(AbstractCar):
+    IMG = RED_CAR
+    START_POS = (180, 200)
+
+def draw(win, images, player):
     for img, pos in images:
         win.blit(img, pos)
+    
+    player.draw(win)
+    pygame.display.update()
 
 
 run = True
 clock = pygame.time.Clock()
 images = [(GRASS, (0,0)), (TRACK, (0,0))]
+player_car = PlayerCar(4, 4)
+
+
 
 while run:
     clock.tick(FPS)
 
-    draw(WIN, images)
+    draw(WIN, images, player_car)
 
-    pygame.display.update()
+    
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
