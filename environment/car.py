@@ -40,5 +40,7 @@ class AbstractCar:
         self.y -= vertical
         self.x -= horizontal
 
-
-    
+    def reduce_speed(self):
+        self.vel = max(self.vel - self.acceration / 2, 0)
+        self.move()
+       
