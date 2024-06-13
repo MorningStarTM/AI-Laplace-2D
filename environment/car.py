@@ -59,4 +59,8 @@ class AbstractCar:
         self.vel = -self.vel
         self.move()
 
+    def reset(self):
+        self.x, self.y = self.START_POS
+        self.angle = 0
+        self.vel = 0
         
