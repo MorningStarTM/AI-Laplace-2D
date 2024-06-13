@@ -10,13 +10,19 @@ TRACK = scale(pygame.image.load("assets\\track.png"), 0.9)
 
 TRACK_BORDER = scale(pygame.image.load("assets\\track-border.png"), 0.9)
 TRACK_BORDER_MASK = pygame.mask.from_surface(TRACK_BORDER)
-FINISH = pygame.image.load("assets\\finish.png")
 
-RED_CAR = scale(pygame.image.load("assets\\red-car.png"), 0.5)
+FINISH = pygame.transform.scale(pygame.image.load("assets\\finish.png"), (125, 20))
+FINISH_MASK = pygame.mask.from_surface(FINISH)
+
+RED_CAR = pygame.image.load("assets\\red-car.png")
+RED_CAR = pygame.transform.scale(RED_CAR, (30, 50))
+
 GREEN_CAR = pygame.image.load("assets\\green-car.png")
 
 WIDTH, HEIGHT = TRACK.get_width(), TRACK.get_height()
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+FINISH_POSITION = (255,190)
+
 pygame.display.set_caption("Racing Game")
 
 FPS = 60
@@ -36,7 +42,7 @@ def draw(win, images, player):
 
 run = True
 clock = pygame.time.Clock()
-images = [(GRASS, (0,0)), (TRACK, (0,0))]
+images = [(GRASS, (0,0)), (TRACK, (0,0)), (FINISH, FINISH_POSITION), (TRACK_BORDER, (0,0))]
 player_car = PlayerCar(4, 4)
 
 
@@ -73,6 +79,14 @@ while run:
 
     if player_car.collide(TRACK_BORDER_MASK) != None:
         player_car.bounce()
+
+    finish_poi_collide = player_car.collide(FINISH_MASK, *FINISH_POSITION)
+    if finish_poi_collide != None:
+        if finish_poi_collide[1] == 0:
+            player_car.bounce()
+        else:
+            player_car.reset()
+            print("finished")
         
 pygame.quit()
 
