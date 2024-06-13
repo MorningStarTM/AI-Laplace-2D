@@ -32,6 +32,11 @@ class AbstractCar:
         self.vel = min(self.vel + self.acceration, self.max_vel)
         self.move()
 
+    def move_backward(self):
+        self.vel = min(self.vel - self.acceration, self.max_vel/2)
+        self.move()
+
+
     def  move(self):
         radians = math.radians(self.angle)
         vertical = math.cos(radians) * self.vel
@@ -44,3 +49,14 @@ class AbstractCar:
         self.vel = max(self.vel - self.acceration / 2, 0)
         self.move()
        
+    def collide(self, mask, x=0, y=0):
+        car_mask = pygame.mask.from_surface(self.img)
+        offset = (int(self.x - x), int(self.y-y))
+        poi = mask.overlap(car_mask, offset)
+        return poi
+    
+    def bounce(self):
+        self.vel = -self.vel
+        self.move()
+
+        

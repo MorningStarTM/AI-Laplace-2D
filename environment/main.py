@@ -8,10 +8,11 @@ from car import AbstractCar
 GRASS = scale(pygame.image.load("assets\\grass.jpg"), 2.5)
 TRACK = scale(pygame.image.load("assets\\track.png"), 0.9)
 
-TRACK_BORDER = scale(pygame.image.load("assets\\track-border.png"), 1.0)
+TRACK_BORDER = scale(pygame.image.load("assets\\track-border.png"), 0.9)
+TRACK_BORDER_MASK = pygame.mask.from_surface(TRACK_BORDER)
 FINISH = pygame.image.load("assets\\finish.png")
 
-RED_CAR = scale_car(pygame.image.load("assets\\red-car.png"), 0.9)
+RED_CAR = scale(pygame.image.load("assets\\red-car.png"), 0.5)
 GREEN_CAR = pygame.image.load("assets\\green-car.png")
 
 WIDTH, HEIGHT = TRACK.get_width(), TRACK.get_height()
@@ -61,10 +62,17 @@ while run:
     if keys[pygame.K_d]:
         player_car.rotate(right=True)
     if keys[pygame.K_w]:
+        moved = True
         player_car.move_forward()
+    if keys[pygame.K_s]:
+        moved = True
+        player_car.move_backward()
 
     if not moved:
         player_car.reduce_speed()
+
+    if player_car.collide(TRACK_BORDER_MASK) != None:
+        player_car.bounce()
         
 pygame.quit()
 
