@@ -40,37 +40,3 @@ class RaceTrack:
 
         pygame.display.flip()
 
-def main():
-    # Initialize Pygame
-    pygame.init()
-
-    # Game settings
-    WIDTH, HEIGHT = 1250, 800
-    OUTER_TRACK_WIDTH = 1000
-    OUTER_TRACK_HEIGHT = 700
-    TRACK_THICKNESS = 220
-
-    # Colors
-    COLORS = {
-        'WHITE': (255, 255, 255),
-        'BLACK': (0, 0, 0),
-        'GRAY': (128, 128, 128),
-        'GREEN': (0, 255, 0)
-    }
-
-    # Create RaceTrack instance
-    track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
-
-    # Main loop
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        # Draw the track
-        track.draw()
-
-    # Quit Pygame
-    pygame.quit()
-
