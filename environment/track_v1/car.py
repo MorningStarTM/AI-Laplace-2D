@@ -7,8 +7,8 @@ class AbstractCar:
     """
     Base class for Car
     """
-    def __init__(self, max_vel, rotation_vel):
-        self.img = pygame.image.load("assets\\BlueStrip_1.png")
+    def __init__(self, img_path, max_vel, rotation_vel):
+        self.img = pygame.image.load(img_path)
         self.max_vel = max_vel
         self.vel = 0
         self.rotation_vel = rotation_vel
@@ -55,6 +55,7 @@ class AbstractCar:
     def collide(self, track):
         outer_track_rect = track.get_outer_track_rect()
         inner_track_rect = track.get_inner_track_rect()
+        
 
         car_rect = self.get_rect()
         return not outer_track_rect.contains(car_rect) or inner_track_rect.colliderect(car_rect)
@@ -62,3 +63,17 @@ class AbstractCar:
     def bounce(self):
         self.vel = -self.vel
         self.move()
+
+
+
+class ComputerCar(AbstractCar):
+    def __init__(self, img_path, max_vel, rotation_vel):
+        super().__init__(img_path, max_vel, rotation_vel)
+        self.img = pygame.image.load(img_path)
+        self.max_vel = max_vel
+        self.vel = 0
+        self.rotation_vel = rotation_vel
+        self.angle = 0
+        self.START_POS = (150, 350)  # Default start position, to be set later
+        self.x, self.y = self.START_POS
+        self.acceration = 0.1
