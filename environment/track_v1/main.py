@@ -1,6 +1,6 @@
 import pygame
 from track_1 import RaceTrack
-from car import AbstractCar
+from car import AbstractCar, ComputerCar
 from utils import blit_rotate_center
 
 def main():
@@ -25,8 +25,9 @@ def main():
     track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
 
     # Create Car instance
-    car = AbstractCar(max_vel=4, rotation_vel=4)
-    car.START_POS = (WIDTH // 2, HEIGHT // 2)  # Set starting position for the car
+    car = AbstractCar(img_path="assets\\BlueStrip_1.png", max_vel=4, rotation_vel=4)
+    computer = ComputerCar(img_path="assets\\GreenStrip.png", max_vel=4, rotation_vel=4)
+
 
     # Main loop
     running = True
@@ -38,6 +39,7 @@ def main():
 
         keys = pygame.key.get_pressed()
         moved = False
+        opponent_moved = False
 
         if keys[pygame.K_a]:
             car.rotate(left=True)
@@ -50,17 +52,36 @@ def main():
             moved = True
             car.move_backward()
 
+
+        if keys[pygame.K_LEFT]:
+            computer.rotate(left=True)
+        if keys[pygame.K_RIGHT]:
+            computer.rotate(right=True)
+        if keys[pygame.K_UP]:
+            computer.move_forward()
+            opponent_moved = True
+        if keys[pygame.K_DOWN]:
+            computer.move_backward()
+            opponent_moved = True
+
+
+
         if not moved:
             car.reduce_speed()
+        if not opponent_moved:
+            computer.reduce_speed()
 
         if car.collide(track):
-            #print("Collision detected!")
-            # Handle collision (e.g., stop the car or reset position)
             car.bounce()
+        if computer.collide(track):
+            computer.bounce()
             
+            
+
         # Draw everything
         track.draw()
         car.draw(track.window)
+        computer.draw(track.window)
 
         pygame.display.flip()
         clock.tick(60)
