@@ -1,6 +1,6 @@
 import pygame
 from track_1 import RaceTrack
-from car import AbstractCar  # Assuming your car class is in car.py
+from car import AbstractCar
 from utils import blit_rotate_center
 
 def main():
@@ -26,13 +26,12 @@ def main():
 
     # Create Car instance
     car = AbstractCar(max_vel=4, rotation_vel=4)
+    car.START_POS = (WIDTH // 2, HEIGHT // 2)  # Set starting position for the car
 
     # Main loop
     running = True
     clock = pygame.time.Clock()
     while running:
-        clock.tick(60)
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -54,12 +53,17 @@ def main():
         if not moved:
             car.reduce_speed()
 
+        if car.collide(track):
+            #print("Collision detected!")
+            # Handle collision (e.g., stop the car or reset position)
+            car.bounce()
+            
         # Draw everything
         track.draw()
         car.draw(track.window)
 
         pygame.display.flip()
-        
+        clock.tick(60)
 
     # Quit Pygame
     pygame.quit()

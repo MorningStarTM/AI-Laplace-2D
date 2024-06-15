@@ -1,8 +1,7 @@
+# car.py
 import pygame
 import math
-import random
 from utils import blit_rotate_center
-
 
 class AbstractCar:
     """
@@ -14,7 +13,8 @@ class AbstractCar:
         self.vel = 0
         self.rotation_vel = rotation_vel
         self.angle = 0
-        self.x, self.y = (250, 300)
+        self.START_POS = (250, 350)  # Default start position, to be set later
+        self.x, self.y = self.START_POS
         self.acceration = 0.1
 
     def rotate(self, left=False, right=False):
@@ -23,21 +23,18 @@ class AbstractCar:
         elif right:
             self.angle -= self.rotation_vel
 
-
     def draw(self, win):
         blit_rotate_center(win, self.img, (self.x, self.y), self.angle)
-
 
     def move_forward(self):
         self.vel = min(self.vel + self.acceration, self.max_vel)
         self.move()
 
     def move_backward(self):
-        self.vel = min(self.vel - self.acceration, self.max_vel/2)
+        self.vel = max(self.vel - self.acceration, -self.max_vel/2)
         self.move()
 
-
-    def  move(self):
+    def move(self):
         radians = math.radians(self.angle)
         vertical = math.cos(radians) * self.vel
         horizontal = math.sin(radians) * self.vel
@@ -48,5 +45,20 @@ class AbstractCar:
     def reduce_speed(self):
         self.vel = max(self.vel - self.acceration / 2, 0)
         self.move()
-       
+
+    def get_rect(self):
+        car_rect = self.img.get_rect(topleft=(self.x, self.y))
+        rotated_rect = pygame.Rect(car_rect)
+        rotated_rect.center = car_rect.center
+        return rotated_rect
+
+    def collide(self, track):
+        outer_track_rect = track.get_outer_track_rect()
+        inner_track_rect = track.get_inner_track_rect()
+
+        car_rect = self.get_rect()
+        return not outer_track_rect.contains(car_rect) or inner_track_rect.colliderect(car_rect)
     
+    def bounce(self):
+        self.vel = -self.vel
+        self.move()

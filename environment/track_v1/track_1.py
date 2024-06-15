@@ -1,3 +1,4 @@
+# track.py
 import pygame
 
 class RaceTrack:
@@ -26,6 +27,12 @@ class RaceTrack:
             self.outer_track_width - 2 * self.track_thickness,
             self.outer_track_height - 2 * self.track_thickness
         )
+
+    def get_outer_track_rect(self):
+        return self.outer_track_rect
+
+    def get_inner_track_rect(self):
+        return self.inner_track_rect
 
     def draw(self):
         self.window.fill(self.colors['WHITE'])
