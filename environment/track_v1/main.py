@@ -40,7 +40,7 @@ def main():
         keys = pygame.key.get_pressed()
         moved = False
         opponent_moved = False
-        print(car.get_speed())
+        print(car.get_angle())
 
         if keys[pygame.K_a]:
             car.rotate(left=True)
@@ -81,6 +81,7 @@ def main():
             
         if car.car_collide(computer):
             car.apply_collision_effect(computer)
+            computer.apply_collision_effect(car)
 
 
         # Draw everything

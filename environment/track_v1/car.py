@@ -78,22 +78,35 @@ class AbstractCar:
     
 
     def apply_collision_effect(self, other_car):
+        # Calculate the impact force and direction
+        impact_force = self.vel * 0.5
         self.vel *= 0.5  # Reduce speed by 50%
-        self.collision_timer = 60  # Apply effect for 1 second (assuming 60 FPS)
+        other_car.vel = min(other_car.vel + impact_force, other_car.max_vel)
 
-        # Simple boost for the other car
-        other_car.vel = min(other_car.vel + 1, other_car.max_vel)
+        # Calculate the angle of collision
+        collision_angle = math.atan2(self.y - other_car.y, self.x - other_car.x)
+        self_angle_radians = math.radians(self.angle)
+        other_angle_radians = math.radians(other_car.angle)
+
+        # Apply forces based on collision angle
+        self.vel -= math.cos(self_angle_radians - collision_angle) * impact_force
+        other_car.vel += math.cos(other_angle_radians - collision_angle) * impact_force
+
+        # Apply direction adjustment
+        self.x -= math.cos(collision_angle) * impact_force
+        self.y -= math.sin(collision_angle) * impact_force
+        other_car.x += math.cos(collision_angle) * impact_force
+        other_car.y += math.sin(collision_angle) * impact_force
+
+        # Reset collision timer
+        self.collision_timer = 60
         other_car.collision_timer = 60
-
-        # Determine collision impact direction
-        angle_diff = (self.angle - other_car.angle) % 360
-        if 45 < angle_diff < 135 or 225 < angle_diff < 315:
-            # Collision from the side
-            self.vel = 0
-            other_car.vel = 0  
 
     def get_speed(self):
         return self.vel
+    
+    def get_angle(self):
+        return self.angle
 
 
 
