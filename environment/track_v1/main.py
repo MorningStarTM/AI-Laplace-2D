@@ -25,8 +25,8 @@ def main():
     track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
 
     # Create Car instance
-    car = AbstractCar(img_path="assets\\BlueStrip_1.png", max_vel=4, rotation_vel=4)
-    computer = ComputerCar(img_path="assets\\GreenStrip.png", max_vel=4, rotation_vel=4)
+    car = AbstractCar(img_path="assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
+    computer = ComputerCar(img_path="assets\\GreenStrip.png", max_vel=5, rotation_vel=4)
 
 
     # Main loop
@@ -40,6 +40,7 @@ def main():
         keys = pygame.key.get_pressed()
         moved = False
         opponent_moved = False
+        print(car.get_speed())
 
         if keys[pygame.K_a]:
             car.rotate(left=True)
@@ -51,6 +52,8 @@ def main():
         if keys[pygame.K_s]:
             moved = True
             car.move_backward()
+        if keys[pygame.K_r]:  # Shift gear
+            car.shift_gear()
 
 
         if keys[pygame.K_LEFT]:
@@ -76,7 +79,9 @@ def main():
         if computer.collide(track):
             computer.bounce()
             
-            
+        if car.car_collide(computer):
+            car.apply_collision_effect(computer)
+
 
         # Draw everything
         track.draw()
@@ -85,7 +90,7 @@ def main():
 
         pygame.display.flip()
         clock.tick(60)
-
+    
     # Quit Pygame
     pygame.quit()
 

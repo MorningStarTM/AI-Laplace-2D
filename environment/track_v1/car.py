@@ -64,6 +64,38 @@ class AbstractCar:
         self.vel = -self.vel
         self.move()
 
+    def get_mask(self):
+        # Get the mask of the car image for pixel-level collision detection
+        rotated_image = pygame.transform.rotate(self.img, self.angle)
+        return pygame.mask.from_surface(rotated_image)
+    
+
+    def car_collide(self, other_car):
+        # Check for pixel-level collision with another car
+        offset = (int(other_car.x - self.x), int(other_car.y - self.y))
+        overlap = self.get_mask().overlap(other_car.get_mask(), offset)
+        return overlap is not None
+    
+
+    def apply_collision_effect(self, other_car):
+        self.vel *= 0.5  # Reduce speed by 50%
+        self.collision_timer = 60  # Apply effect for 1 second (assuming 60 FPS)
+
+        # Simple boost for the other car
+        other_car.vel = min(other_car.vel + 1, other_car.max_vel)
+        other_car.collision_timer = 60
+
+        # Determine collision impact direction
+        angle_diff = (self.angle - other_car.angle) % 360
+        if 45 < angle_diff < 135 or 225 < angle_diff < 315:
+            # Collision from the side
+            self.vel = 0
+            other_car.vel = 0  
+
+    def get_speed(self):
+        return self.vel
+
+
 
 
 class ComputerCar(AbstractCar):
