@@ -1,16 +1,20 @@
 # track.py
 import pygame
 
+pygame.init()
+
 class RaceTrack:
-    def __init__(self, width, height, outer_track_width, outer_track_height, track_thickness, colors):
+    def __init__(self, window, width, height, outer_track_width, outer_track_height, track_thickness, colors):
         self.width = width
         self.height = height
         self.outer_track_width = outer_track_width
         self.outer_track_height = outer_track_height
         self.track_thickness = track_thickness
         self.colors = colors
-        self.window = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption('Race Track')
+        self.window = window
+        #self.window = pygame.display.set_mode((self.width, self.height))
+        #pygame.display.flip()
+        #pygame.display.set_caption('Race Track')
 
         self.finish_line_img = self.create_finish_flag_image(215, 30, 10)
         self.finish_line_pos = (130, 300)
