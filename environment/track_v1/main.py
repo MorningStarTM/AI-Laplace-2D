@@ -1,5 +1,5 @@
 import pygame
-from car import AbstractCar, ComputerCar
+from environment.track_v1.lidarCar import AbstractCar, ComputerCar
 from track import RaceTrack
 
 # Colors
@@ -82,6 +82,7 @@ def main():
         track.draw(screen)
         car.draw(screen)
         computer.draw(screen)
+        car.draw_radars(screen)
 
         pygame.display.flip()  # Update the display
         clock.tick(60)  # Cap the frame rate at 60 FPS

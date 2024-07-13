@@ -1,6 +1,6 @@
 import pygame
 import math
-from lidar import LiDAR
+from LiDAR import LiDAR
 
 
 def scale(img, factor):
