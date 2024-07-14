@@ -55,11 +55,10 @@ class AbstractCar:
     def collide(self, track):
         outer_track_rect = track.get_outer_track_rect()
         inner_track_rect = track.get_inner_track_rect()
-        
 
         car_rect = self.get_rect()
         return not outer_track_rect.contains(car_rect) or inner_track_rect.colliderect(car_rect)
-    
+
     def bounce(self):
         self.vel = -self.vel
         self.move()
@@ -68,14 +67,12 @@ class AbstractCar:
         # Get the mask of the car image for pixel-level collision detection
         rotated_image = pygame.transform.rotate(self.img, self.angle)
         return pygame.mask.from_surface(rotated_image)
-    
 
     def car_collide(self, other_car):
         # Check for pixel-level collision with another car
         offset = (int(other_car.x - self.x), int(other_car.y - self.y))
         overlap = self.get_mask().overlap(other_car.get_mask(), offset)
         return overlap is not None
-    
 
     def apply_collision_effect(self, other_car):
         # Calculate the impact force and direction
@@ -104,10 +101,41 @@ class AbstractCar:
 
     def get_speed(self):
         return self.vel
-    
+
     def get_angle(self):
         return self.angle
 
+    def get_position(self):
+        return (self.x, self.y)
+
+    def get_orientation(self):
+        return self.angle
+
+    def get_velocity(self):
+        return self.vel
+
+    def get_steering_angle(self):
+        return self.angle  # Assuming steering angle is directly related to the car's angle
+
+    def get_distances_to_obstacles(self, track, num_directions=8):
+        distances = []
+        directions = [i * (360 / num_directions) for i in range(num_directions)]
+        for direction in directions:
+            angle_rad = math.radians(direction)
+            x_step = math.cos(angle_rad)
+            y_step = math.sin(angle_rad)
+            distance = 0
+
+            while distance < 100:  # Max distance to check
+                check_x = self.x + distance * x_step
+                check_y = self.y + distance * y_step
+
+                if not track.get_outer_track_rect().collidepoint(check_x, check_y) or track.get_inner_track_rect().collidepoint(check_x, check_y):
+                    break
+
+                distance += 1
+            distances.append(distance)
+        return distances
 
 
 

@@ -1,5 +1,5 @@
 import pygame
-from environment.track_v1.lidarCar import AbstractCar, ComputerCar
+from car import AbstractCar, ComputerCar
 from track import RaceTrack
 
 # Colors
@@ -27,8 +27,8 @@ def main():
     track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
 
     # Create Car instances
-    car = AbstractCar(img_path="assets/BlueStrip_1.png", max_vel=5, rotation_vel=4)
-    computer = ComputerCar(img_path="assets/GreenStrip.png", max_vel=5, rotation_vel=4)
+    car = AbstractCar(img_path="assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
+    computer = ComputerCar(img_path="assets\\GreenStrip.png", max_vel=5, rotation_vel=4)
 
     running = True
     clock = pygame.time.Clock()
@@ -77,12 +77,24 @@ def main():
             car.apply_collision_effect(computer)
             computer.apply_collision_effect(car)
 
+        # Get observations
+        distances = car.get_distances_to_obstacles(track)
+        position = car.get_position()
+        orientation = car.get_orientation()
+        velocity = car.get_velocity()
+        steering_angle = car.get_steering_angle()
+
+        print("Distances to obstacles:", distances)
+        print("Car position:", position)
+        print("Car orientation:", orientation)
+        print("Car velocity:", velocity)
+        print("Steering angle:", steering_angle)
+
         # Draw everything
         screen.fill(COLORS['WHITE'])  # Clear the screen with white color
         track.draw(screen)
         car.draw(screen)
         computer.draw(screen)
-        car.draw_radars(screen)
 
         pygame.display.flip()  # Update the display
         clock.tick(60)  # Cap the frame rate at 60 FPS
