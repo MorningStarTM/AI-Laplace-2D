@@ -109,13 +109,13 @@ class AbstractCar:
         return (self.x, self.y)
 
     def get_orientation(self):
-        return self.angle
+        return self.angle % 360
 
     def get_velocity(self):
         return self.vel
 
     def get_steering_angle(self):
-        return self.angle  # Assuming steering angle is directly related to the car's angle
+        return self.angle % 360 # Assuming steering angle is directly related to the car's angle
 
     def get_distances_to_obstacles(self, track, num_directions=8):
         distances = []
