@@ -10,6 +10,31 @@ COLORS = {
     'GREEN': (0, 255, 0)
 }
 
+
+def draw_finish_line(screen, position, width, height, colors):
+    """
+    Draw a finishing line with black and white checkered pattern.
+
+    :param screen: Pygame surface to draw on.
+    :param position: Tuple (x, y) representing the top-left position of the finish line.
+    :param width: Width of the finishing line.
+    :param height: Height of the finishing line.
+    :param colors: Dictionary with 'BLACK' and 'WHITE' colors.
+    """
+    x, y = position
+    square_size = 10  # Size of each square in the checkered pattern
+
+    for row in range(height // square_size):
+        for col in range(width // square_size):
+            color = colors['BLACK'] if (row + col) % 2 == 0 else colors['WHITE']
+            pygame.draw.rect(screen, color, (x + col * square_size, y + row * square_size, square_size, square_size))
+
+colors = {'BLACK': (0, 0, 0), 'WHITE': (255, 255, 255)}
+finish_line_position = (400, 50)  # Example position
+finish_line_width = 100  # Example width
+finish_line_height = 20  # Example height
+
+
 def main():
     pygame.init()
 
@@ -22,9 +47,10 @@ def main():
     # Create screen
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('Race Track')
-
+    
     # Create RaceTrack instance
     track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
+    
 
     # Create Car instances
     car = AbstractCar(img_path="assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
@@ -84,11 +110,8 @@ def main():
         velocity = car.get_velocity()
         steering_angle = car.get_steering_angle()
 
-        print("Distances to obstacles:", distances)
-        print("Car position:", position)
-        print("Car orientation:", orientation)
-        print("Car velocity:", velocity)
-        print("Steering angle:", steering_angle)
+        print("Car orientation:", orientation % 360)
+        print("Steering angle:", steering_angle % 360)
 
         # Draw everything
         screen.fill(COLORS['WHITE'])  # Clear the screen with white color
