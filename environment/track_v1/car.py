@@ -13,7 +13,7 @@ class AbstractCar:
         self.vel = 0
         self.rotation_vel = rotation_vel
         self.angle = 0
-        self.START_POS = (250, 350)  # Default start position, to be set later
+        self.START_POS = (250, 290)  # Default start position, to be set later
         self.x, self.y = self.START_POS
         self.acceration = 0.1
 
@@ -147,6 +147,6 @@ class ComputerCar(AbstractCar):
         self.vel = 0
         self.rotation_vel = rotation_vel
         self.angle = 0
-        self.START_POS = (150, 350)  # Default start position, to be set later
+        self.START_POS = (150, 290)  # Default start position, to be set later
         self.x, self.y = self.START_POS
         self.acceration = 0.1

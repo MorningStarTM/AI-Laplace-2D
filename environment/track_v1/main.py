@@ -103,6 +103,10 @@ def main():
             car.apply_collision_effect(computer)
             computer.apply_collision_effect(car)
 
+        if track.finish_line_collide(car):
+            print("Game Over")
+            running = False
+
         # Get observations
         distances = car.get_distances_to_obstacles(track)
         position = car.get_position()
@@ -110,8 +114,8 @@ def main():
         velocity = car.get_velocity()
         steering_angle = car.get_steering_angle()
 
-        print("Car orientation:", orientation % 360)
-        print("Steering angle:", steering_angle % 360)
+        print("Car orientation:", orientation )
+        print("Steering angle:", steering_angle)
 
         # Draw everything
         screen.fill(COLORS['WHITE'])  # Clear the screen with white color

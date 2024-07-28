@@ -12,7 +12,7 @@ class RaceTrack:
         # Finish line properties
         self.finish_line_width = 220
         self.finish_line_height = 30
-        self.finish_line_position = (100, 300)
+        self.finish_line_position = (100, 380)
 
         self.calculate_positions()
 
@@ -30,7 +30,7 @@ class RaceTrack:
             self.outer_track_height - 2 * self.track_thickness
         )
         
-        self.finish_line_position = (125, 300)
+        self.finish_line_position = (125, 380)
 
     def get_outer_track_rect(self):
         return self.outer_track_rect
