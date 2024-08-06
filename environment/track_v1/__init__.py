@@ -1,2 +1,3 @@
-from track_1 import RaceTrack
-from car import AbstractCar
+
+from .car import AbstractCar, ComputerCar
+from .track import RaceTrack
