@@ -2,8 +2,8 @@ import gym
 from gym import spaces
 import pygame
 import numpy as np
-from track_v1 import AbstractCar, ComputerCar
-from track_v1 import RaceTrack
+from .track_v1 import AbstractCar, ComputerCar
+from .track_v1 import RaceTrack
 import sys
 
 
@@ -56,14 +56,14 @@ class CarRaceEnv(gym.Env):
             'GRAY': (128, 128, 128),
             'GREEN': (0, 255, 0)
         })
-        self.car = AbstractCar(img_path="track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
+        self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
 
         self.clock = pygame.time.Clock()
 
 
     def reset(self):
-        self.car = AbstractCar(img_path="track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
+        self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
         return self._get_observation()
     
