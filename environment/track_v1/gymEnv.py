@@ -43,4 +43,7 @@ class CarRaceEnv(gym.Env):
         self.clock = pygame.time.Clock()
 
 
-    
+    def reset(self):
+        self.car = AbstractCar(img_path="assets/BlueStrip_1.png", max_vel=5, rotation_vel=4)
+        self.car.x, self.car.y = 250, 290
+        return self._get_observation()
