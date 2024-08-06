@@ -4,7 +4,19 @@ import pygame
 import numpy as np
 from car import AbstractCar, ComputerCar
 from track import RaceTrack
+import sys
 
+COLORS = {
+    'WHITE': (255, 255, 255),
+    'BLACK': (0, 0, 0),
+    'GRAY': (128, 128, 128),
+    'GREEN': (0, 255, 0)
+}
+
+WIDTH, HEIGHT = 1250, 800
+OUTER_TRACK_WIDTH = 1000
+OUTER_TRACK_HEIGHT = 700
+TRACK_THICKNESS = 220  
 
 class CarRaceEnv(gym.Env):
     """
@@ -20,9 +32,13 @@ class CarRaceEnv(gym.Env):
         self.action_space = spaces.Discrete(5)  # 0: No action, 1: Rotate left, 2: Rotate right, 3: Move forward, 4: Move backward
 
         # Observation space is a vector with position (x, y), angle, and speed
-        self.observation_space = spaces.Box(low=np.array([-np.inf, -np.inf, -360, 0]),
-                                            high=np.array([np.inf, np.inf, 360, 10]),
+        self.observation_space = spaces.Box(low=np.array([-np.inf, -np.inf, 0, 0, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf]),
+                                            high=np.array([np.inf, np.inf, 360, 10, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf]),
                                             dtype=np.float32)
+
+              
+        # Create RaceTrack instance
+        self.track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
 
         # Initialize Pygame and create the environment
         pygame.init()
@@ -87,6 +103,7 @@ class CarRaceEnv(gym.Env):
 
     def close(self):
         pygame.quit()
+        sys.exit()
 
     
     def _get_observation(self):
@@ -97,5 +114,6 @@ class CarRaceEnv(gym.Env):
         orientation = self.car.get_orientation()
         velocity = self.car.get_velocity()
         steer_angle = self.car.get_steering_angle()
-        obs_distance = self.car.get_distances_to_obstacles()
-        return np.array([pos[0], pos[1], angle, speed, orientation, velocity, steer_angle, obs_distance], dtype=np.float32)
+        obs_dis = self.car.get_distances_to_obstacles(self.track)
+        return np.array([pos[0], pos[1], angle, speed, orientation, velocity, steer_angle, obs_dis[0], obs_dis[1], obs_dis[2], obs_dis[3], \
+                         obs_dis[4], obs_dis[5], obs_dis[6], obs_dis[7]], dtype=np.float32)
