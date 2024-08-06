@@ -1,3 +1,5 @@
+#main.py
+
 import pygame
 from car import AbstractCar, ComputerCar
 from track import RaceTrack
@@ -100,8 +102,9 @@ def main():
             computer.bounce()
 
         if car.car_collide(computer):
-            car.apply_collision_effect(computer)
-            computer.apply_collision_effect(car)
+            #car.apply_collision_effect(computer)
+            computer.bounce()
+            car.bounce()
 
         if track.finish_line_collide(car):
             print("Game Over")
