@@ -47,3 +47,31 @@ class CarRaceEnv(gym.Env):
         self.car = AbstractCar(img_path="assets/BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
         return self._get_observation()
+    
+
+    def step(self, action):
+        # Define action effects
+        if action == 1:  # Rotate left
+            self.car.rotate(left=True)
+        elif action == 2:  # Rotate right
+            self.car.rotate(right=True)
+        elif action == 3:  # Move forward
+            self.car.move_forward()
+        elif action == 4:  # Move backward
+            self.car.move_backward()
+
+        # Update car position
+        self.car.move()
+
+        # Check collision with finish line
+        if self.track.finish_line_collide(self.car):
+            reward = 1.0  # Reward for finishing line collision
+            done = True
+        elif self.car.collide(self.track):
+            reward = -1.0  # Negative reward for collision with the track
+            done = True
+        else:
+            reward = 0.0
+            done = False
+
+        return self._get_observation(), reward, done, {}
