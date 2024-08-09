@@ -21,7 +21,7 @@ def main():
             
             # Step the environment with the sampled action
             observation, reward, done, info = env.step(action)
-            print(observation)
+            
             # Accumulate the total reward
             total_reward += reward
             
