@@ -106,6 +106,8 @@ def main():
             computer.bounce()
             car.bounce()
 
+        if track.start_line_collide(car):
+            car.bounce()
         if track.finish_line_collide(car):
             print("Game Over")
             running = False
