@@ -82,15 +82,18 @@ class CarRaceEnv(gym.Env):
         # Update car position
         self.car.move()
 
+        if self.track.start_line_collide(self.car):
+            done = False
+            self.car.bounce()
         # Check collision with finish line
         if self.track.finish_line_collide(self.car):
-            reward = 1.0  # Reward for finishing line collision
+            reward = 10.0  # Reward for finishing line collision
             done = True
         elif self.car.collide(self.track):
             reward = -1.0  # Negative reward for collision with the track
-            done = True
+            done = False
         else:
-            reward = 0.0
+            reward = 1.0
             done = False
 
         return self._get_observation(), reward, done, {}
