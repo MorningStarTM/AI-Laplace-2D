@@ -32,7 +32,7 @@ class CarRaceEnv(gym.Env):
         super(CarRaceEnv, self).__init__()
 
         # Define action and observation space
-        self.action_space = spaces.Discrete(5)  # 0: No action, 1: Rotate left, 2: Rotate right, 3: Move forward, 4: Move backward
+        self.action_space = spaces.Discrete(4)  # 0: No action, 1: Rotate left, 2: Rotate right, 3: Move forward, 4: Move backward
 
         # Observation space is a vector with position (x, y), angle, and speed
         self.observation_space = spaces.Box(low=np.array([-np.inf, -np.inf, 0, 0, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf]),
@@ -72,6 +72,8 @@ class CarRaceEnv(gym.Env):
     
 
     def step(self, action):
+        done = False
+        reward = 0
         # Define action effects
         if action == 1:  # Rotate left
             self.car.rotate(left=True)
@@ -79,8 +81,8 @@ class CarRaceEnv(gym.Env):
             self.car.rotate(right=True)
         elif action == 3:  # Move forward
             self.car.move_forward()
-        elif action == 4:  # Move backward
-            self.car.move_backward()
+        #elif action == 4:  # Move backward
+        #    self.car.move_backward()
 
         # Update car position
         self.car.move()
@@ -90,21 +92,27 @@ class CarRaceEnv(gym.Env):
         if self.track.start_line_collide(self.car):
             done = False
             self.car.bounce()
+
         # Check collision with finish line
         if self.track.finish_line_collide(self.car):
-            reward = 10.0  # Reward for finishing line collision
+            reward = 100.0  # Reward for finishing line collision
             done = True
+            self.reset()
+
         elif self.car.collide(self.track):
+            self.car.bounce()
             reward = -1.0  # Negative reward for collision with the track
             done = False
-        elif self.frame_iteration > 100:  # Check if frame iteration limit is exceeded
+
+        elif self.frame_iteration > 500:  # Check if frame iteration limit is exceeded
             reward = -10.0  # Assign negative reward for exceeding the frame iteration limit
             done = True
+            self.reset()
         else:
-            reward = 1.0
+            reward = 0.1
             done = False
 
-        return self._get_observation(), reward, done, {}
+        return self._get_observation(), reward, done, self.frame_iteration, {}
     
 
     def render(self, mode='human'):
