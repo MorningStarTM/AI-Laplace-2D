@@ -60,12 +60,15 @@ class CarRaceEnv(gym.Env):
         self.car.x, self.car.y = 250, 290
 
         self.clock = pygame.time.Clock()
+        self.frame_iteration = 0  
 
 
     def reset(self):
         self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
+        self.frame_iteration = 0 
         return self._get_observation()
+         
     
 
     def step(self, action):
@@ -82,6 +85,8 @@ class CarRaceEnv(gym.Env):
         # Update car position
         self.car.move()
 
+        self.frame_iteration += 1  
+
         if self.track.start_line_collide(self.car):
             done = False
             self.car.bounce()
@@ -92,6 +97,9 @@ class CarRaceEnv(gym.Env):
         elif self.car.collide(self.track):
             reward = -1.0  # Negative reward for collision with the track
             done = False
+        elif self.frame_iteration > 100:  # Check if frame iteration limit is exceeded
+            reward = -10.0  # Assign negative reward for exceeding the frame iteration limit
+            done = True
         else:
             reward = 1.0
             done = False
