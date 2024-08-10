@@ -3,6 +3,7 @@
 import pygame
 from car import AbstractCar, ComputerCar
 from track import RaceTrack
+import time
 
 # Colors
 COLORS = {
@@ -36,7 +37,10 @@ finish_line_position = (400, 50)  # Example position
 finish_line_width = 100  # Example width
 finish_line_height = 20  # Example height
 
+clock = pygame.time.Clock()
 
+
+start_time = time.time()
 def main():
     pygame.init()
 
@@ -109,7 +113,9 @@ def main():
         if track.start_line_collide(car):
             car.bounce()
         if track.finish_line_collide(car):
-            print("Game Over")
+            end_time = time.time()
+            finishing_time = end_time - start_time
+            print(f"Game Over! Finishing time: {finishing_time:.2f} seconds")
             running = False
 
         # Get observations
