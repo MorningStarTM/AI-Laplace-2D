@@ -121,3 +121,7 @@ class CarRaceEnv(gym.Env):
         steer_angle = self.car.get_steering_angle()
         obs_dis = self.car.get_distances_to_obstacles(self.track)
         return np.array([pos[0], pos[1], angle, speed, orientation, velocity, steer_angle] + list(obs_dis), dtype=np.float32)
+    
+
+    def save_data(self, filename):
+        np.save(filename, np.array(self.data))
