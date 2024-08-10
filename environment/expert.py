@@ -96,3 +96,12 @@ class CarRaceEnv(gym.Env):
             print("Finished line collided. Data saved.")
             # Do not close the display
         return next_state, reward, done, {}
+    
+
+    def render(self, mode='human'):
+        if mode == 'human':
+            self.screen.fill((255, 255, 255))  # Clear screen
+            self.track.draw(self.screen)
+            self.car.draw(self.screen)
+            pygame.display.flip()
+            self.clock.tick(60)  # Cap the frame rate
