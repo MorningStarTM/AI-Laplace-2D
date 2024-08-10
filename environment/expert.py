@@ -125,3 +125,38 @@ class CarRaceEnv(gym.Env):
 
     def save_data(self, filename):
         np.save(filename, np.array(self.data))
+
+
+
+if __name__ == "__main__":
+    env = CarRaceEnv()
+    state = env.reset()
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        keys = pygame.key.get_pressed()
+        action = 0  # Default: No action
+
+        if keys[pygame.K_a]:
+            action = 1  # Rotate left
+        if keys[pygame.K_d]:
+            action = 2  # Rotate right
+        if keys[pygame.K_w]:
+            action = 3  # Move forward
+        if keys[pygame.K_s]:
+            action = 4  # Move backward
+
+        state, reward, done, _ = env.step(action)
+        env.render()
+
+        if done:
+            print("Finished line collided. Collecting more data.")
+            # Continue to collect data if needed
+
+    env.save_data("car_race_data.npy")
+    env.close()
+
