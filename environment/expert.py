@@ -73,7 +73,7 @@ class CarRaceEnv(gym.Env):
             self.car.move_backward()
 
         # Update car position
-        self.car.move()
+        #self.car.move()
 
         # Check collision with the track and finishing line
         if self.track.start_line_collide(self.car):
@@ -85,6 +85,7 @@ class CarRaceEnv(gym.Env):
         elif self.car.collide(self.track):
             reward = -1.0  # Negative reward for collision with the track
             done = False
+            self.car.bounce()
         else:
             reward = 0.1
             done = False
@@ -124,7 +125,25 @@ class CarRaceEnv(gym.Env):
     
 
     def save_data(self, filename):
-        np.save(filename, np.array(self.data))
+        observations = [entry[0] for entry in self.data]
+        actions = [entry[1] for entry in self.data]
+        rewards = [entry[2] for entry in self.data]
+        next_states = [entry[3] for entry in self.data]
+        dones = [entry[4] for entry in self.data]
+
+        # Convert lists to numpy arrays
+        obs_array = np.array(observations)
+        action_array = np.array(actions)
+        reward_array = np.array(rewards)
+        next_state_array = np.array(next_states)
+        done_array = np.array(dones)
+
+        # Save each array separately
+        np.save(filename.replace('.npy', '_observations.npy'), obs_array)
+        np.save(filename.replace('.npy', '_actions.npy'), action_array)
+        np.save(filename.replace('.npy', '_rewards.npy'), reward_array)
+        np.save(filename.replace('.npy', '_next_states.npy'), next_state_array)
+        np.save(filename.replace('.npy', '_dones.npy'), done_array)
 
 
 
