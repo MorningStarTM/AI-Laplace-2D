@@ -105,3 +105,19 @@ class CarRaceEnv(gym.Env):
             self.car.draw(self.screen)
             pygame.display.flip()
             self.clock.tick(60)  # Cap the frame rate
+
+
+    def close(self):
+        pygame.quit()
+        sys.exit()
+
+    def _get_observation(self):
+        # Return the current state as observation
+        pos = self.car.get_position()
+        angle = self.car.get_angle()
+        speed = self.car.get_speed()
+        orientation = self.car.get_orientation()
+        velocity = self.car.get_velocity()
+        steer_angle = self.car.get_steering_angle()
+        obs_dis = self.car.get_distances_to_obstacles(self.track)
+        return np.array([pos[0], pos[1], angle, speed, orientation, velocity, steer_angle] + list(obs_dis), dtype=np.float32)
