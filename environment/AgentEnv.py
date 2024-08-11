@@ -54,7 +54,46 @@ class CarRaceEnv:
         self.frame_iteration = 0 
         return self._get_observation()
          
-    
+    def step(self, action):
+        done = False
+        reward = 0
+        # Define action effects
+        if action == 1:  # Rotate left
+            self.car.rotate(left=True)
+        elif action == 2:  # Rotate right
+            self.car.rotate(right=True)
+        elif action == 3:  # Move forward
+            self.car.move_forward()
+        #elif action == 4:  # Move backward
+        #    self.car.move_backward()
+
+        # Update car position
+        self.car.move()
+
+        self.frame_iteration += 1  
+
+        if self.track.start_line_collide(self.car):
+            done = False
+            self.car.bounce()
+
+        # Check collision with finish line
+        if self.track.finish_line_collide(self.car):
+            reward = 100.0  # Reward for finishing line collision
+            done = True
+
+        elif self.car.collide(self.track):
+            self.car.bounce()
+            reward = -1.0  # Negative reward for collision with the track
+            done = False
+
+        elif self.frame_iteration > 400:  # Check if frame iteration limit is exceeded
+            reward = -10.0  # Assign negative reward for exceeding the frame iteration limit
+            done = True
+        else:
+            reward = -0.1
+            done = False
+
+        return self._get_observation(), reward, done, self.frame_iteration
     
     def render(self):
         self.screen.fill((255, 255, 255))  # Clear screen
