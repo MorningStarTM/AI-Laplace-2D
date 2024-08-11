@@ -97,19 +97,17 @@ class CarRaceEnv(gym.Env):
         if self.track.finish_line_collide(self.car):
             reward = 100.0  # Reward for finishing line collision
             done = True
-            self.reset()
 
         elif self.car.collide(self.track):
             self.car.bounce()
             reward = -1.0  # Negative reward for collision with the track
             done = False
 
-        elif self.frame_iteration > 500:  # Check if frame iteration limit is exceeded
+        elif self.frame_iteration > 400:  # Check if frame iteration limit is exceeded
             reward = -10.0  # Assign negative reward for exceeding the frame iteration limit
             done = True
-            self.reset()
         else:
-            reward = 0.1
+            reward = -0.1
             done = False
 
         return self._get_observation(), reward, done, self.frame_iteration, {}
