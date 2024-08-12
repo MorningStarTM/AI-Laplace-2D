@@ -19,22 +19,19 @@ OUTER_TRACK_HEIGHT = 700
 TRACK_THICKNESS = 220
 
 
-class CarRaceEnv(gym.Env):
+class RaceEnv:
     """
-    Custom Environment for Car Racing with manual control and data collection.
+    Custom Environment for Car Racing without Gym.
+    This environment uses Pygame for rendering and simulating the car race.
     """
-    metadata = {'render.modes': ['human']}
-
+    
     def __init__(self):
-        super(CarRaceEnv, self).__init__()
-
         # Define action and observation space
-        self.action_space = spaces.Discrete(5)  # 0: No action, 1: Rotate left, 2: Rotate right, 3: Move forward, 4: Move backward
+        self.action_space = 4  # 0: Rotate left, 1: Rotate right, 2: Move forward, 3: Move backward
 
         # Observation space is a vector with position (x, y), angle, and speed
-        self.observation_space = spaces.Box(low=np.array([-np.inf, -np.inf, 0, 0, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf]),
-                                            high=np.array([np.inf, np.inf, 360, 10, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf]),
-                                            dtype=np.float32)
+        self.observation_space = np.array([-np.inf, -np.inf, 0, 0, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf],
+                                          dtype=np.float32)
 
         # Create RaceTrack instance
         self.track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
@@ -45,68 +42,71 @@ class CarRaceEnv(gym.Env):
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Car Racing Environment')
 
-        # Create Car instances
+        # Create Track and Car instances
+        self.track = RaceTrack(self.width, self.height, 1000, 700, 220, COLORS)
         self.car = AbstractCar(img_path="track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
 
         self.clock = pygame.time.Clock()
+        self.frame_iteration = 0  
+        self.data = []  # List to store demonstrations
 
-        # Initialize data collection
-        self.data = []
-
-    
     def reset(self):
         self.car = AbstractCar(img_path="track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
+        self.frame_iteration = 0 
         return self._get_observation()
-    
-
+         
     def step(self, action):
+        done = False
+        reward = 0
         # Define action effects
-        if action == 1:  # Rotate left
+        if action == 0:  # Rotate left
             self.car.rotate(left=True)
-        elif action == 2:  # Rotate right
+        elif action == 1:  # Rotate right
             self.car.rotate(right=True)
-        elif action == 3:  # Move forward
+        elif action == 2:  # Move forward
             self.car.move_forward()
-        elif action == 4:  # Move backward
+        elif action == 3:  # Move backward
             self.car.move_backward()
 
         # Update car position
-        #self.car.move()
+        self.car.move()
 
-        # Check collision with the track and finishing line
+        self.frame_iteration += 1  
+
         if self.track.start_line_collide(self.car):
             done = False
             #self.car.bounce()
+
+        # Check collision with finish line
         if self.track.finish_line_collide(self.car):
-            reward = 10.0  # Reward for finishing line collision
+            reward = 100.0  # Reward for finishing line collision
             done = True
+
         elif self.car.collide(self.track):
+            self.car.bounce()
             reward = -1.0  # Negative reward for collision with the track
             done = False
-            self.car.bounce()
+
+        elif self.frame_iteration > 1000:  # Check if frame iteration limit is exceeded
+            reward = -10.0  # Assign negative reward for exceeding the frame iteration limit
+            done = True
         else:
-            reward = 0.1
+            reward = -0.1
             done = False
 
         next_state = self._get_observation()
-        self.data.append((self._get_observation(), action, reward, next_state, done))
+        self.data.append([self._get_observation(), action, reward, next_state, done])
         
-        if done:
-            print("Finished line collided. Data saved.")
-            # Do not close the display
-        return next_state, reward, done, {}
+        return next_state, reward, done, self.frame_iteration
     
-
-    def render(self, mode='human'):
-        if mode == 'human':
-            self.screen.fill((255, 255, 255))  # Clear screen
-            self.track.draw(self.screen)
-            self.car.draw(self.screen)
-            pygame.display.flip()
-            self.clock.tick(60)  # Cap the frame rate
-
+    def render(self):
+        self.screen.fill((255, 255, 255))  # Clear screen
+        self.track.draw(self.screen)
+        self.car.draw(self.screen)
+        pygame.display.flip()
+        self.clock.tick(60)  # Cap the frame rate
 
     def close(self):
         pygame.quit()
@@ -121,34 +121,15 @@ class CarRaceEnv(gym.Env):
         velocity = self.car.get_velocity()
         steer_angle = self.car.get_steering_angle()
         obs_dis = self.car.get_distances_to_obstacles(self.track)
-        return np.array([pos[0], pos[1], angle, speed, orientation, velocity, steer_angle] + list(obs_dis), dtype=np.float32)
+        return np.array([pos[0], pos[1], angle, speed, orientation, velocity, steer_angle, obs_dis[0], obs_dis[1], obs_dis[2], obs_dis[3], \
+                         obs_dis[4], obs_dis[5], obs_dis[6], obs_dis[7]], dtype=np.float32)
     
-
     def save_data(self, filename):
-        observations = [entry[0] for entry in self.data]
-        actions = [entry[1] for entry in self.data]
-        rewards = [entry[2] for entry in self.data]
-        next_states = [entry[3] for entry in self.data]
-        dones = [entry[4] for entry in self.data]
-
-        # Convert lists to numpy arrays
-        obs_array = np.array(observations)
-        action_array = np.array(actions)
-        reward_array = np.array(rewards)
-        next_state_array = np.array(next_states)
-        done_array = np.array(dones)
-
-        # Save each array separately
-        np.save(filename.replace('.npy', '_observations.npy'), obs_array)
-        np.save(filename.replace('.npy', '_actions.npy'), action_array)
-        np.save(filename.replace('.npy', '_rewards.npy'), reward_array)
-        np.save(filename.replace('.npy', '_next_states.npy'), next_state_array)
-        np.save(filename.replace('.npy', '_dones.npy'), done_array)
-
+        np.save(filename, np.array(self.data, dtype=object))
 
 
 if __name__ == "__main__":
-    env = CarRaceEnv()
+    env = RaceEnv()
     state = env.reset()
 
     running = True
@@ -158,16 +139,14 @@ if __name__ == "__main__":
                 running = False
 
         keys = pygame.key.get_pressed()
-        action = 0  # Default: No action
+        action = 2  # Default: No action
 
         if keys[pygame.K_a]:
-            action = 1  # Rotate left
+            action = 0  # Rotate left
         if keys[pygame.K_d]:
-            action = 2  # Rotate right
+            action = 1  # Rotate right
         if keys[pygame.K_w]:
-            action = 3  # Move forward
-        if keys[pygame.K_s]:
-            action = 4  # Move backward
+            action = 2  # Move forward
 
         state, reward, done, _ = env.step(action)
         env.render()
