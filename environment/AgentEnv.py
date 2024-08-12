@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-from track_v1 import AbstractCar, RaceTrack
+from .track_v1 import AbstractCar, RaceTrack
 import sys
 import time
 
@@ -17,7 +17,7 @@ OUTER_TRACK_HEIGHT = 700
 TRACK_THICKNESS = 220  
 
 
-class CarRaceEnv:
+class RaceEnv:
     """
     Custom Environment for Car Racing without Gym.
     This environment uses Pygame for rendering and simulating the car race.
@@ -42,14 +42,14 @@ class CarRaceEnv:
 
         # Create Track and Car instances
         self.track = RaceTrack(self.width, self.height, 1000, 700, 220, COLORS)
-        self.car = AbstractCar(img_path="track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
+        self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
 
         self.clock = pygame.time.Clock()
         self.frame_iteration = 0  
 
     def reset(self):
-        self.car = AbstractCar(img_path="track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
+        self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
         self.frame_iteration = 0 
         return self._get_observation()
@@ -121,37 +121,4 @@ class CarRaceEnv:
 
 
 
-def main():
-    # Initialize the environment
-    env = CarRaceEnv()
-    
-    # Reset the environment to the initial state
-    observation = env.reset()
 
-    # Sample actions (for demonstration purposes)
-    actions = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]  # Rotate left, Rotate right, Move forward
-    
-    try:
-        for action in actions:
-            # Step through the environment with the sample action
-            observation, reward, done, frame_iteration = env.step(action)
-            
-            # Render the environment
-            env.render()
-            
-            # Print out the current state and reward for observation
-            print(f"Action: {action}, Reward: {reward}, Done: {done}")
-            
-            # Pause for a short period to visualize the changes
-           
-
-            if done:
-                print("Episode finished.")
-                break
-
-    finally:
-        # Close the environment and Pygame
-        env.close()
-
-if __name__ == "__main__":
-    main()
