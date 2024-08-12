@@ -35,10 +35,10 @@ class RaceEnv:
         self.track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
 
         # Initialize Pygame and create the environment
-        pygame.init()
+        #pygame.init()
         self.width, self.height = 1250, 800
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption('Car Racing Environment')
+        #pygame.display.set_caption('Car Racing Environment')
 
         # Create Track and Car instances
         self.track = RaceTrack(self.width, self.height, 1000, 700, 220, COLORS)
@@ -57,13 +57,14 @@ class RaceEnv:
     def step(self, action):
         done = False
         reward = 0
+        self.car.move_forward()
         # Define action effects
-        if action == 1:  # Rotate left
+        if action == 0:  # Rotate left
             self.car.rotate(left=True)
-        elif action == 2:  # Rotate right
+        elif action == 1:  # Rotate right
             self.car.rotate(right=True)
-        elif action == 3:  # Move forward
-            self.car.move_forward()
+        #elif action == 2:  # Move forward
+        #    self.car.move_forward()
         #elif action == 4:  # Move backward
         #    self.car.move_backward()
 
@@ -86,11 +87,11 @@ class RaceEnv:
             reward = -1.0  # Negative reward for collision with the track
             done = False
 
-        elif self.frame_iteration > 400:  # Check if frame iteration limit is exceeded
-            reward = -10.0  # Assign negative reward for exceeding the frame iteration limit
+        elif self.frame_iteration % 200 == 0:  # Check if frame iteration limit is exceeded
+            reward = -0.01  # Assign negative reward for exceeding the frame iteration limit
             done = True
         else:
-            reward = -0.1
+            reward = 0.01
             done = False
 
         return self._get_observation(), reward, done, self.frame_iteration
