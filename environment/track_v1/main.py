@@ -64,7 +64,10 @@ def main():
 
     running = True
     clock = pygame.time.Clock()
+    timeframe = 0
+
     while running:
+        timeframe += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -115,7 +118,7 @@ def main():
         if track.finish_line_collide(car):
             end_time = time.time()
             finishing_time = end_time - start_time
-            print(f"Game Over! Finishing time: {finishing_time:.2f} seconds")
+            print(f"Game Over! Finishing time: {finishing_time:.2f} seconds -- Frame {timeframe}")
             running = False
 
         # Get observations
