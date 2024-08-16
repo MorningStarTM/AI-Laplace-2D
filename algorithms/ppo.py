@@ -11,6 +11,26 @@ import numpy as np
 from environment import RaceEnv
 import gym
 
+
+class RolloutBuffer:
+    def __init__(self):
+        self.actions = []
+        self.states = []
+        self.logprobs = []
+        self.rewards = []
+        self.state_values = []
+        self.is_terminals = []
+    
+
+    def clear(self):
+        del self.actions[:]
+        del self.states[:]
+        del self.logprobs[:]
+        del self.rewards[:]
+        del self.state_values[:]
+        del self.is_terminals[:]
+
+        
 class ActorCritic(nn.Module):
     def __init__(self, state_dim, action_dim, has_continuous_action_space, action_std_init):
         super(ActorCritic, self).__init__()
