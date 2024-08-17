@@ -1,5 +1,3 @@
-#main.py
-
 import pygame
 from car import AbstractCar, ComputerCar
 from track import RaceTrack
@@ -12,7 +10,6 @@ COLORS = {
     'GRAY': (128, 128, 128),
     'GREEN': (0, 255, 0)
 }
-
 
 def draw_finish_line(screen, position, width, height, colors):
     """
@@ -39,8 +36,8 @@ finish_line_height = 20  # Example height
 
 clock = pygame.time.Clock()
 
-
 start_time = time.time()
+
 def main():
     pygame.init()
 
@@ -57,7 +54,6 @@ def main():
     # Create RaceTrack instance
     track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
     
-
     # Create Car instances
     car = AbstractCar(img_path="assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
     computer = ComputerCar(img_path="assets\\GreenStrip.png", max_vel=5, rotation_vel=4)
@@ -65,6 +61,8 @@ def main():
     running = True
     clock = pygame.time.Clock()
     timeframe = 0
+
+    car_on_point_line = False  # Track whether the car is on the point line
 
     while running:
         timeframe += 1
@@ -109,7 +107,6 @@ def main():
             computer.bounce()
 
         if car.car_collide(computer):
-            #car.apply_collision_effect(computer)
             computer.bounce()
             car.bounce()
 
@@ -121,15 +118,19 @@ def main():
             print(f"Game Over! Finishing time: {finishing_time:.2f} seconds -- Frame {timeframe}")
             running = False
 
+        if track.point_line_collide(car):
+            if not car_on_point_line:
+                print(f"Point line crossed! -- Frame {timeframe}")
+                car_on_point_line = True
+        else:
+            car_on_point_line = False
+
         # Get observations
         distances = car.get_distances_to_obstacles(track)
         position = car.get_position()
         orientation = car.get_orientation()
         velocity = car.get_velocity()
         steering_angle = car.get_steering_angle()
-
-        print("Car orientation:", orientation )
-        print("Steering angle:", steering_angle)
 
         # Draw everything
         screen.fill(COLORS['WHITE'])  # Clear the screen with white color
