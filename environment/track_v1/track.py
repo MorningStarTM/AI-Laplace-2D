@@ -66,6 +66,19 @@ class RaceTrack:
         x, y = self.start_line_position
         pygame.draw.rect(window, self.colors['BLACK'], (x, y, self.finish_line_width, self.start_line_height))
 
+
+    def point_line(self, window, pos:tuple, size:tuple):
+        """
+        Draw the start line (black line) just behind the car and in front of the finish line.
+
+        :param window: Pygame surface to draw on.
+        """
+        x, y = pos
+        width, height = size
+        pygame.draw.rect(window, self.colors['BLACK'], (x, y, width, height))
+
+
+
     def draw(self, window):
         pygame.draw.rect(window, self.colors['GRAY'], self.outer_track_rect)  # Outer track
         pygame.draw.rect(window, self.colors['GREEN'], self.inner_track_rect)  # Inner track
