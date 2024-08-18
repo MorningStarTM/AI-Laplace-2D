@@ -51,6 +51,8 @@ finish_line_width = 100  # Example width
 finish_line_height = 20  # Example height
 
 clock = pygame.time.Clock()
+point = [(600, 50), (905, 400), (600, 530)]
+track_point = [(128, 200),(960, 50),(900, 590),(300, 530), (100, 380)]
 
 start_time = time.time()
 
@@ -66,6 +68,13 @@ def main():
     point_a = False
     point_b = False
     point_c = False
+
+    point_1 = False
+    point_2 = False
+    point_3 = False
+    point_4 = False
+    point_5 = False
+
 
     # Create screen
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -87,7 +96,7 @@ def main():
     car_on_point_line = False  # Track whether the car is on the point line
 
     while running:
-        print(car.get_position())
+        total_distance = 0
         timeframe += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -140,6 +149,7 @@ def main():
             finishing_time = end_time - start_time
             print(f"Game Over! Finishing time: {finishing_time:.2f} seconds -- Frame {timeframe}")
             running = False
+            point_5 = True
 
         if track.point_A_line_collide(car):
             point_a = True
@@ -150,8 +160,37 @@ def main():
         if track.point_C_line_collide(car):
             point_c = True
 
+        if track.point_line_collide(pos=track_point[0], size=(220, 2), car=car):
+            point_1 = True
+        if track.point_line_collide(pos=track_point[1], size=(2, 220), car=car):
+            point_2 = True
+        if track.point_line_collide(pos=track_point[2], size=(220, 2), car=car):
+            point_3 = True
+        if track.point_line_collide(pos=track_point[3], size=(2, 220), car=car):
+            point_4 = True
 
-        if not point_a:
+        
+        if not point_1:
+            total_distance = euclidean_distance(point1=car.get_position(), point2=track_point[0]) + euclidean_distance(point1=track_point[0], point2=track_point[1]) + euclidean_distance(point1=track_point[1], point2=track_point[2]) + euclidean_distance(point1=track_point[2], point2=track_point[3]) + euclidean_distance(point1=track_point[3], point2=track_point[4])
+            #print(f"{euclidean_distance(point1=car.get_position(), point2=track_point[0])} + {euclidean_distance(point1=track_point[0], point2=track_point[1])} = {euclidean_distance(point1=car.get_position(), point2=track_point[0]) + euclidean_distance(point1=track_point[0], point2=track_point[1])}")
+        
+        if point_1 and not point_2:
+            total_distance = euclidean_distance(point1=car.get_position(), point2=track_point[1]) + euclidean_distance(point1=track_point[1], point2=track_point[2]) + euclidean_distance(point1=track_point[2], point2=track_point[3]) + euclidean_distance(point1=track_point[3], point2=track_point[4])
+         
+        if point_1 and point_2 and not point_3:
+            total_distance = euclidean_distance(point1=car.get_position(), point2=track_point[2]) + euclidean_distance(point1=track_point[2], point2=track_point[3]) + euclidean_distance(point1=track_point[3], point2=track_point[4])
+
+        if point_1 and point_2 and point_3 and not point_4:
+            total_distance = euclidean_distance(point1=car.get_position(), point2=track_point[3]) + euclidean_distance(point1=track_point[3], point2=track_point[4])
+        
+        if point_1 and point_2 and point_3 and point_4 and not point_5:
+            total_distance = euclidean_distance(point1=car.get_position(), point2=track_point[4])
+            
+         
+        print(f"Total distance: {total_distance}")
+
+
+        
 
 
         # Get observations
@@ -169,7 +208,7 @@ def main():
 
         pygame.display.flip()  # Update the display
         clock.tick(60)  # Cap the frame rate at 60 FPS
-    print(point_a, point_b, point_c)
+    print(point_1, point_2, point_3, point_4)
     pygame.quit()
 
 if __name__ == "__main__":
