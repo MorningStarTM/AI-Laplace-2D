@@ -51,6 +51,8 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('Race Track')
     
+    points_lap = []
+
     # Create RaceTrack instance
     track = RaceTrack(WIDTH, HEIGHT, OUTER_TRACK_WIDTH, OUTER_TRACK_HEIGHT, TRACK_THICKNESS, COLORS)
     
@@ -118,9 +120,29 @@ def main():
             print(f"Game Over! Finishing time: {finishing_time:.2f} seconds -- Frame {timeframe}")
             running = False
 
-        if track.point_line_collide(car):
+        if track.point_A_line_collide(car):
             if not car_on_point_line:
-                print(f"Point line crossed! -- Frame {timeframe}")
+                print(f"Point line crossed! -- Frame {points_lap}")
+                if 'A' not in points_lap:
+                    points_lap.append('A')
+                car_on_point_line = True
+        else:
+            car_on_point_line = False
+
+        if track.point_B_line_collide(car):
+            if not car_on_point_line:
+                print(f"Point line crossed! -- Frame {points_lap}")
+                if 'B' not in points_lap:
+                    points_lap.append('B')
+                car_on_point_line = True
+        else:
+            car_on_point_line = False
+
+        if track.point_C_line_collide(car):
+            if not car_on_point_line:
+                print(f"Point line crossed! -- Frame {points_lap}")
+                if 'C' not in points_lap:
+                    points_lap.append('C')
                 car_on_point_line = True
         else:
             car_on_point_line = False
