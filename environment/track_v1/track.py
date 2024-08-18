@@ -17,7 +17,7 @@ class RaceTrack:
         # Start line properties (behind the car)
         self.start_line_height = 10  # Height of the start line
         self.start_line_position = (100, self.finish_line_position[1] + self.finish_line_height + 10)
-        self.point = [(600, 50)]
+        self.point = [(600, 50), (905, 400), (600, 530)]
 
         self.calculate_positions()
 
@@ -68,7 +68,7 @@ class RaceTrack:
         pygame.draw.rect(window, self.colors['BLACK'], (x, y, self.finish_line_width, self.start_line_height))
 
 
-    def point_line(self, window, pos:tuple, size:tuple):
+    def point_A_line(self, window, pos:tuple, size:tuple):
         """
         Draw the start line (black line) just behind the car and in front of the finish line.
 
@@ -77,6 +77,27 @@ class RaceTrack:
         x, y = pos
         width, height = size
         pygame.draw.rect(window, self.colors['BLACK'], (x, y, width, height))
+
+    def point_B_line(self, window, pos:tuple, size:tuple):
+        """
+        Draw the start line (black line) just behind the car and in front of the finish line.
+
+        :param window: Pygame surface to draw on.
+        """
+        x, y = pos
+        width, height = size
+        pygame.draw.rect(window, self.colors['BLACK'], (x, y, width, height))
+    
+    def point_C_line(self, window, pos:tuple, size:tuple):
+        """
+        Draw the start line (black line) just behind the car and in front of the finish line.
+
+        :param window: Pygame surface to draw on.
+        """
+        x, y = pos
+        width, height = size
+        pygame.draw.rect(window, self.colors['BLACK'], (x, y, width, height))
+
 
     def draw(self, window):
         pygame.draw.rect(window, self.colors['GRAY'], self.outer_track_rect)  # Outer track
@@ -90,7 +111,9 @@ class RaceTrack:
 
         # Draw the start line (anti-cheat line)
         self.draw_start_line(window)
-        self.point_line(window, self.point[0], (2, 220))
+        self.point_A_line(window, self.point[0], (2, 220))
+        self.point_B_line(window, self.point[1], (220, 2))
+        self.point_C_line(window, self.point[2], (2, 220))
 
     def finish_line_collide(self, car):
         """
@@ -114,7 +137,7 @@ class RaceTrack:
         car_rect = car.get_rect()
         return start_line_rect.colliderect(car_rect)
 
-    def point_line_collide(self, car):
+    def point_A_line_collide(self, car):
         """
         Check if the car collides with the point line.
 
@@ -122,5 +145,28 @@ class RaceTrack:
         :return: True if collision, otherwise False.
         """
         point_line_rect = pygame.Rect(self.point[0][0], self.point[0][1], 2, 220)
+        car_rect = car.get_rect()
+        return point_line_rect.colliderect(car_rect)
+    
+    def point_B_line_collide(self, car):
+        """
+        Check if the car collides with the point line.
+
+        :param car: Instance of the car.
+        :return: True if collision, otherwise False.
+        """
+        point_line_rect = pygame.Rect(self.point[1][0], self.point[1][1], 220, 2)
+        car_rect = car.get_rect()
+        return point_line_rect.colliderect(car_rect)
+    
+
+    def point_C_line_collide(self, car):
+        """
+        Check if the car collides with the point line.
+
+        :param car: Instance of the car.
+        :return: True if collision, otherwise False.
+        """
+        point_line_rect = pygame.Rect(self.point[2][0], self.point[2][1], 2, 220)
         car_rect = car.get_rect()
         return point_line_rect.colliderect(car_rect)
