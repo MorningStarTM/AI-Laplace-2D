@@ -152,6 +152,18 @@ class RaceTrack:
         start_line_rect = pygame.Rect(self.start_line_position[0], self.start_line_position[1], self.finish_line_width, self.start_line_height)
         car_rect = car.get_rect()
         return start_line_rect.colliderect(car_rect)
+    
+    def point_line_collide(self, pos:tuple, size:tuple, car):
+        """
+        Check if the car collides with the point line.
+
+        :param car: Instance of the car.
+        :return: True if collision, otherwise False.
+        """
+        point_line_rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
+        car_rect = car.get_rect()
+        return point_line_rect.colliderect(car_rect)
+    
 
     def point_A_line_collide(self, car):
         """
