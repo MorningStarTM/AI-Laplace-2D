@@ -2,6 +2,7 @@ import pygame
 from car import AbstractCar, ComputerCar
 from track import RaceTrack
 import time
+import math
 
 # Colors
 COLORS = {
@@ -10,6 +11,21 @@ COLORS = {
     'GRAY': (128, 128, 128),
     'GREEN': (0, 255, 0)
 }
+
+
+def euclidean_distance(point1, point2):
+    """
+    Calculate the Euclidean distance between two points.
+
+    :param point1: Tuple (x1, y1) representing the coordinates of the first point.
+    :param point2: Tuple (x2, y2) representing the coordinates of the second point.
+    :return: Euclidean distance between the two points.
+    """
+    x1, y1 = point1
+    x2, y2 = point2
+    distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    return distance
+
 
 def draw_finish_line(screen, position, width, height, colors):
     """
@@ -47,6 +63,10 @@ def main():
     OUTER_TRACK_HEIGHT = 700
     TRACK_THICKNESS = 220
 
+    point_a = False
+    point_b = False
+    point_c = False
+
     # Create screen
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('Race Track')
@@ -67,6 +87,7 @@ def main():
     car_on_point_line = False  # Track whether the car is on the point line
 
     while running:
+        print(car.get_position())
         timeframe += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -121,31 +142,17 @@ def main():
             running = False
 
         if track.point_A_line_collide(car):
-            if not car_on_point_line:
-                print(f"Point line crossed! -- Frame {points_lap}")
-                if 'A' not in points_lap:
-                    points_lap.append('A')
-                car_on_point_line = True
-        else:
-            car_on_point_line = False
+            point_a = True
 
         if track.point_B_line_collide(car):
-            if not car_on_point_line:
-                print(f"Point line crossed! -- Frame {points_lap}")
-                if 'B' not in points_lap:
-                    points_lap.append('B')
-                car_on_point_line = True
-        else:
-            car_on_point_line = False
-
+            point_b = True
+            
         if track.point_C_line_collide(car):
-            if not car_on_point_line:
-                print(f"Point line crossed! -- Frame {points_lap}")
-                if 'C' not in points_lap:
-                    points_lap.append('C')
-                car_on_point_line = True
-        else:
-            car_on_point_line = False
+            point_c = True
+
+
+        if not point_a:
+
 
         # Get observations
         distances = car.get_distances_to_obstacles(track)
@@ -162,7 +169,7 @@ def main():
 
         pygame.display.flip()  # Update the display
         clock.tick(60)  # Cap the frame rate at 60 FPS
-
+    print(point_a, point_b, point_c)
     pygame.quit()
 
 if __name__ == "__main__":
