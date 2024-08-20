@@ -3,6 +3,8 @@ import numpy as np
 from .track_v1 import AbstractCar, RaceTrack
 import sys
 import time
+import math
+
 
 COLORS = {
     'WHITE': (255, 255, 255),
@@ -16,6 +18,18 @@ OUTER_TRACK_WIDTH = 1000
 OUTER_TRACK_HEIGHT = 700
 TRACK_THICKNESS = 220  
 
+def euclidean_distance(point1, point2):
+    """
+    Calculate the Euclidean distance between two points.
+
+    :param point1: Tuple (x1, y1) representing the coordinates of the first point.
+    :param point2: Tuple (x2, y2) representing the coordinates of the second point.
+    :return: Euclidean distance between the two points.
+    """
+    x1, y1 = point1
+    x2, y2 = point2
+    distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    return distance
 
 class RaceEnv:
     """
@@ -42,20 +56,35 @@ class RaceEnv:
 
         # Create Track and Car instances
         self.track = RaceTrack(self.width, self.height, 1000, 700, 220, COLORS)
-        self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
+        self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=2.5, rotation_vel=3.1)
         self.car.x, self.car.y = 250, 290
 
         self.clock = pygame.time.Clock()
         self.frame_iteration = 0  
+        self.point = [(600, 50), (905, 400), (600, 530)]
+        self.track_point = [(128, 200),(960, 50),(900, 590),(300, 530), (100, 380)]
+        self.total_distance = 0 
 
     def reset(self):
         self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
         self.car.x, self.car.y = 250, 290
         self.frame_iteration = 0 
+        self.total_distance = 0
         return self._get_observation()
          
     def step(self, action):
+        
         done = False
+        point_a = False
+        point_b = False
+        point_c = False
+
+        point_1 = False
+        point_2 = False
+        point_3 = False
+        point_4 = False
+        point_5 = False
+
         reward = 0
         self.car.move_forward()
         # Define action effects
@@ -71,7 +100,41 @@ class RaceEnv:
         # Update car position
         self.car.move()
 
-        self.frame_iteration += 1  
+        self.frame_iteration += 1
+
+        if self.track.point_A_line_collide(self.car):
+            point_a = True
+
+        if self.track.point_B_line_collide(self.car):
+            point_b = True
+            
+        if self.track.point_C_line_collide(self.car):
+            point_c = True
+
+        if self.track.point_line_collide(pos=self.track_point[0], size=(220, 2), car=self.car):
+            point_1 = True
+        if self.track.point_line_collide(pos=self.track_point[1], size=(2, 220), car=self.car):
+            point_2 = True
+        if self.track.point_line_collide(pos=self.track_point[2], size=(220, 2), car=self.car):
+            point_3 = True
+        if self.track.point_line_collide(pos=self.track_point[3], size=(2, 220), car=self.car):
+            point_4 = True  
+
+        if not point_1:
+            self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[0]) + euclidean_distance(point1=self.track_point[0], point2=self.track_point[1]) + euclidean_distance(point1=self.track_point[1], point2=self.track_point[2]) + euclidean_distance(point1=self.track_point[2], point2=self.track_point[3]) + euclidean_distance(point1=self.track_point[3], point2=self.track_point[4])
+            #print(f"{euclidean_distance(point1=car.get_position(), point2=track_point[0])} + {euclidean_distance(point1=track_point[0], point2=track_point[1])} = {euclidean_distance(point1=car.get_position(), point2=track_point[0]) + euclidean_distance(point1=track_point[0], point2=track_point[1])}")
+        
+        if point_1 and not point_2:
+            self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[1]) + euclidean_distance(point1=self.track_point[1], point2=self.track_point[2]) + euclidean_distance(point1=self.track_point[2], point2=self.track_point[3]) + euclidean_distance(point1=self.track_point[3], point2=self.track_point[4])
+         
+        if point_1 and point_2 and not point_3:
+            self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[2]) + euclidean_distance(point1=self.track_point[2], point2=self.track_point[3]) + euclidean_distance(point1=self.track_point[3], point2=self.track_point[4])
+
+        if point_1 and point_2 and point_3 and not point_4:
+            self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[3]) + euclidean_distance(point1=self.track_point[3], point2=self.track_point[4])
+        
+        if point_1 and point_2 and point_3 and point_4 and not point_5:
+            self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[4])
 
         if self.track.start_line_collide(self.car):
             done = False
@@ -87,9 +150,9 @@ class RaceEnv:
             reward = -1.0  # Negative reward for collision with the track
             done = False
 
-        elif self.frame_iteration % 200 == 0:  # Check if frame iteration limit is exceeded
+        elif self.frame_iteration % 600 == 0:  # Check if frame iteration limit is exceeded
             reward = -0.01  # Assign negative reward for exceeding the frame iteration limit
-            done = True
+            done = False
         else:
             reward = 0.01
             done = False
