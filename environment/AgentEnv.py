@@ -39,10 +39,10 @@ class RaceEnv:
     
     def __init__(self):
         # Define action and observation space
-        self.action_space = 4  # 0: No action, 1: Rotate left, 2: Rotate right, 3: Move forward, 4: Move backward
+        self.action_space = 2  # 0: No action, 1: Rotate left, 2: Rotate right, 3: Move forward, 4: Move backward
 
         # Observation space is a vector with position (x, y), angle, and speed
-        self.observation_space = np.array([-np.inf, -np.inf, 0, 0, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf],
+        self.observation_space = np.array([-np.inf, -np.inf, 0, 0, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf],
                                           dtype=np.float32)
 
         # Create RaceTrack instance
@@ -184,7 +184,7 @@ class RaceEnv:
         steer_angle = self.car.get_steering_angle()
         obs_dis = self.car.get_distances_to_obstacles(self.track)
         return np.array([pos[0], pos[1], angle, speed, orientation, velocity, steer_angle, obs_dis[0], obs_dis[1], obs_dis[2], obs_dis[3], \
-                         obs_dis[4], obs_dis[5], obs_dis[6], obs_dis[7]], dtype=np.float32)
+                         obs_dis[4], obs_dis[5], obs_dis[6], obs_dis[7], self.total_distance], dtype=np.float32)
 
 
 
