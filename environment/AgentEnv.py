@@ -64,6 +64,15 @@ class RaceEnv:
         self.point = [(600, 50), (905, 400), (600, 530)]
         self.track_point = [(128, 200),(960, 50),(900, 590),(300, 530), (100, 380)]
         self.total_distance = 0 
+        self.point_a = False
+        self.point_b = False
+        self.point_c = False
+
+        self.point_1 = False
+        self.point_2 = False
+        self.point_3 = False
+        self.point_4 = False
+        self.point_5 = False
 
     def reset(self):
         self.car = AbstractCar(img_path="environment\\track_v1\\assets\\BlueStrip_1.png", max_vel=5, rotation_vel=4)
@@ -75,15 +84,7 @@ class RaceEnv:
     def step(self, action):
         
         done = False
-        point_a = False
-        point_b = False
-        point_c = False
-
-        point_1 = False
-        point_2 = False
-        point_3 = False
-        point_4 = False
-        point_5 = False
+        
 
         reward = 0
         self.car.move_forward()
@@ -103,37 +104,40 @@ class RaceEnv:
         self.frame_iteration += 1
 
         if self.track.point_A_line_collide(self.car):
-            point_a = True
+            self.point_a = True
+            reward = 0.05
 
         if self.track.point_B_line_collide(self.car):
-            point_b = True
+            self.point_b = True
+            reward = 0.1
             
         if self.track.point_C_line_collide(self.car):
-            point_c = True
+            self.point_c = True
+            reward = 0.8
 
         if self.track.point_line_collide(pos=self.track_point[0], size=(220, 2), car=self.car):
-            point_1 = True
+            self.point_1 = True
         if self.track.point_line_collide(pos=self.track_point[1], size=(2, 220), car=self.car):
-            point_2 = True
+            self.point_2 = True
         if self.track.point_line_collide(pos=self.track_point[2], size=(220, 2), car=self.car):
-            point_3 = True
+            self.point_3 = True
         if self.track.point_line_collide(pos=self.track_point[3], size=(2, 220), car=self.car):
-            point_4 = True  
+            self.point_4 = True  
 
-        if not point_1:
+        if not self.point_1:
             self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[0]) + euclidean_distance(point1=self.track_point[0], point2=self.track_point[1]) + euclidean_distance(point1=self.track_point[1], point2=self.track_point[2]) + euclidean_distance(point1=self.track_point[2], point2=self.track_point[3]) + euclidean_distance(point1=self.track_point[3], point2=self.track_point[4])
             #print(f"{euclidean_distance(point1=car.get_position(), point2=track_point[0])} + {euclidean_distance(point1=track_point[0], point2=track_point[1])} = {euclidean_distance(point1=car.get_position(), point2=track_point[0]) + euclidean_distance(point1=track_point[0], point2=track_point[1])}")
         
-        if point_1 and not point_2:
+        if self.point_1 and not self.point_2:
             self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[1]) + euclidean_distance(point1=self.track_point[1], point2=self.track_point[2]) + euclidean_distance(point1=self.track_point[2], point2=self.track_point[3]) + euclidean_distance(point1=self.track_point[3], point2=self.track_point[4])
          
-        if point_1 and point_2 and not point_3:
+        if self.point_1 and self.point_2 and not self.point_3:
             self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[2]) + euclidean_distance(point1=self.track_point[2], point2=self.track_point[3]) + euclidean_distance(point1=self.track_point[3], point2=self.track_point[4])
 
-        if point_1 and point_2 and point_3 and not point_4:
+        if self.point_1 and self.point_2 and self.point_3 and not self.point_4:
             self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[3]) + euclidean_distance(point1=self.track_point[3], point2=self.track_point[4])
         
-        if point_1 and point_2 and point_3 and point_4 and not point_5:
+        if self.point_1 and self.point_2 and self.point_3 and self.point_4 and not self.point_5:
             self.total_distance = euclidean_distance(point1=self.car.get_position(), point2=self.track_point[4])
 
         if self.track.start_line_collide(self.car):
