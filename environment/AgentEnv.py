@@ -79,6 +79,15 @@ class RaceEnv:
         self.car.x, self.car.y = 250, 290
         self.frame_iteration = 0 
         self.total_distance = 0
+        self.point_a = False
+        self.point_b = False
+        self.point_c = False
+
+        self.point_1 = False
+        self.point_2 = False
+        self.point_3 = False
+        self.point_4 = False
+        self.point_5 = False
         return self._get_observation()
          
     def step(self, action):
@@ -105,15 +114,15 @@ class RaceEnv:
 
         if self.track.point_A_line_collide(self.car):
             self.point_a = True
-            reward = 0.05
+            
 
         if self.track.point_B_line_collide(self.car):
             self.point_b = True
-            reward = 0.1
+            
             
         if self.track.point_C_line_collide(self.car):
             self.point_c = True
-            reward = 0.8
+            
 
         if self.track.point_line_collide(pos=self.track_point[0], size=(220, 2), car=self.car):
             self.point_1 = True
@@ -158,7 +167,15 @@ class RaceEnv:
             reward = -0.01  # Assign negative reward for exceeding the frame iteration limit
             done = False
         else:
-            reward = 0.01
+            if self.point_a:
+                reward = 0.05
+            elif self.point_b:
+                reward = 1.0
+            elif self.point_c:
+                reward = 1.5
+            else:
+                reward = 0.01
+
             done = False
 
         return self._get_observation(), reward, done, self.frame_iteration
