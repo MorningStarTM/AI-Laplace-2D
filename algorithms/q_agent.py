@@ -83,6 +83,8 @@ class DQNAgent:
 
     def save_model(self, path:str):
         torch.save(self.model.state_dict(), os.path.join("models", path))
+        print(f"model saved ")
 
     def load_model(self, path:str):
         self.model.load_state_dict(torch.load(os.path.join("models", path)))
+        print(f"model loaded")
