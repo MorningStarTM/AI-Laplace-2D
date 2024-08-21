@@ -160,21 +160,26 @@ class RaceEnv:
 
         elif self.car.collide(self.track):
             self.car.bounce()
-            reward = -1.0  # Negative reward for collision with the track
+            reward = -5.0  # Negative reward for collision with the track
             done = False
 
-        elif self.frame_iteration % 600 == 0:  # Check if frame iteration limit is exceeded
-            reward = -0.01  # Assign negative reward for exceeding the frame iteration limit
+        elif self.frame_iteration % 200 == 0:  # Check if frame iteration limit is exceeded
+            reward = -0.1  # Assign negative reward for exceeding the frame iteration limit
             done = False
+
+        elif self.frame_iteration == 2000:
+            reward = -100
+            done = True
+
         else:
             if self.point_a:
-                reward = 0.05
+                reward = 0.5
             elif self.point_b:
                 reward = 1.0
             elif self.point_c:
                 reward = 1.5
             else:
-                reward = 0.01
+                reward = 0.1
 
             done = False
 
