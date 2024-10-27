@@ -115,7 +115,7 @@ def main():
             end_time = time.time()
             finishing_time = end_time - start_time
             print(f"Game Over! Finishing time: {finishing_time:.2f} seconds")
-            running = False
+            
 
         # Get observations
         distances = car.get_distances_to_obstacles(track)
